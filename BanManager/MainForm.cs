@@ -36,7 +36,7 @@ namespace BanManager
         {
             peoplelist.Items.Clear();
             foreach (BanPerson b in persons)
-                peoplelist.Items.Add(b.toString());
+                peoplelist.Items.Add(b.toString().Replace('*',' '));
             save();
         }
         public static bool ok = false;
@@ -46,9 +46,23 @@ namespace BanManager
             Form add = new Add();
             add.ShowDialog();
             if (ok)
-                persons.Add(person);
+            {
+                bool flag = true;
+                for (int i = 0; i < persons.Count; i++)
+                    if (persons[i].getQQ() == person.getQQ())
+                    {
+                        flag = false;
+                        peoplelist.SelectedIndex = i;
+                        MessageBox.Show("这个人之前已经被封禁过一次了哦");
+                        break;
+                    }
+                if (flag)
+                {
+                    persons.Add(person);
+                    refreshList();
+                }
+            }
             ok = false;
-            refreshList();
         }
         public static string id;
         private void 查询ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -88,6 +102,17 @@ namespace BanManager
                 persons.RemoveAt(peoplelist.SelectedIndex);
                 refreshList();
             }
+        }
+
+        private void 查看ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (peoplelist.SelectedIndex == -1)
+            {
+                MessageBox.Show("请先选择一条记录");
+                return;
+            }
+            Form add = new Show(persons[peoplelist.SelectedIndex]);
+            add.ShowDialog();
         }
     }
 }
