@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BanManager
 {
-    class BanPerson
+    public class BanPerson
     {
         private long qqid;
         private string reason, evidence;
@@ -32,6 +32,20 @@ namespace BanManager
         public string getEvidence()
         {
             return evidence;
+        }
+        public string toString()
+        {
+            return qqid.ToString() + " " + reason + " " + evidence;
+        }
+        public static BanPerson parse(string data)
+        {
+            var s = data.Split(' ');
+            if (!long.TryParse(s[0], out long id))
+            {
+                id = 0;
+                throw new Exception("程序出现未知错误，请联系作者");
+            }
+            return new BanPerson(id, s[1], s[2]);
         }
     }
 }
